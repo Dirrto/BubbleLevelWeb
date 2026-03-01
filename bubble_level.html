@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nivela Pro | Nivel Digital Premium</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --accent: #ff00c8;
+            --bg: #030308;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --success: #00ffaa;
+            --error: #ff3366;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 255, 0.15) 0%, transparent 40%);
+            color: #ffffff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Header --- */
+        header {
+            padding: 30px 20px 10px;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            gap: 30px;
+            position: relative;
+        }
+
+        /* --- Big Circular Level --- */
+        .level-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            box-shadow: 
+                0 0 50px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .level-container.leveled {
+            border-color: var(--success);
+            box-shadow: 0 0 40px rgba(0, 255, 170, 0.2);
+        }
+
+        .grid-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .grid-line-h {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .grid-line-v {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 1px;
+            height: 100%;
+            background: var(--border);
+        }
+
+        .target-circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .circle {
+            position: absolute;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+        }
+
+        .circle-1 { width: 40px; height: 40px; border-color: rgba(255,255,255,0.2); }
+        .circle-2 { width: 100px; height: 100px; }
+        .circle-3 { width: 180px; height: 180px; }
+
+        .bubble {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle at 30% 30%, #fff, var(--primary));
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 5px 20px rgba(0, 242, 255, 0.4);
+            transition: transform 0.05s linear;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .bubble::after {
+            content: '';
+            width: 15px;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            filter: blur(2px);
+        }
+
+        /* --- Readings --- */
+        .readings {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .card {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 20px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .card-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .card-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .card-value span {
+            font-size: 14px;
+            color: var(--primary);
+            margin-left: 2px;
+        }
+
+        /* --- Controls --- */
+        .controls {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 16px;
+            border-radius: 16px;
+            border: none;
+            background: var(--card-bg);
+            color: #fff;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 1px solid var(--border);
+        }
+
+        button:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            box-shadow: 0 10px 25px rgba(112, 0, 255, 0.3);
+        }
+
+        /* --- Permission Overlay --- */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .overlay-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 0 20px var(--primary));
+        }
+
+        .overlay-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .overlay-text {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- Warning Modal --- */
+        #warning {
+            position: fixed;
+            bottom: 30px;
+            left: 20px;
+            right: 20px;
+            background: #ff336633;
+            border: 1px solid var(--error);
+            padding: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #fff;
+            z-index: 2000;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .leveled-text {
+            color: var(--success);
+            font-weight: 700;
+            text-shadow: 0 0 10px var(--success);
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <div class="overlay-icon">🚀</div>
+        <h2 class="overlay-title">NIVELA PRO</h2>
+        
+        <!-- Panel de Diagnóstico -->
+        <div id="diagnostics" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; width: 280px; margin-bottom: 30px; text-align: left; font-size: 13px; border: 1px solid var(--border);">
+            <div style="margin-bottom: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">Estado del Sistema:</div>
+            <div id="diag-https" style="margin-bottom: 5px;">🔒 Conexión Segura: <span style="float: right;">Cargando...</span></div>
+            <div id="diag-sensors" style="margin-bottom: 5px;">📱 Soporte Sensores: <span style="float: right;">Cargando...</span></div>
+            <div id="diag-context" style="margin-bottom: 5px;">🌐 Contexto: <span style="float: right;">Cargando...</span></div>
+        </div>
+
+        <p class="overlay-text" style="margin-bottom: 25px;">
+            Pulsa el botón para activar la calibración de alta precisión.
+        </p>
+        
+        <button class="btn-primary" id="startBtn" onclick="initSensors()" style="width: 240px; border-radius: 50px;">
+            ACTIVAR SENSORES
+        </button>
+
+        <div id="https-help" class="hidden" style="margin-top: 25px; color: #ff9900; font-size: 14px; max-width: 300px; line-height: 1.4;">
+            ⚠️ <b>¡Atención!</b> Los sensores requieren <b>HTTPS</b>. Si lo abres como archivo local o por IP (http), Chrome los desactivará por seguridad.
+        </div>
+    </div>
+
+    <div id="warning" class="hidden">
+        <span>⚠️</span>
+        <span id="warning-text">No se detectan datos de movimiento.</span>
+    </div>
+
+    <header>
+        <div class="subtitle">Herramienta Profesional</div>
+        <h1 class="title">NIVELA PRO</h1>
+    </header>
+
+    <main>
+        <div class="level-container" id="levelBox">
+            <div class="grid-lines">
+                <div class="grid-line-h"></div>
+                <div class="grid-line-v"></div>
+            </div>
+            <div class="target-circles">
+                <div class="circle circle-1"></div>
+                <div class="circle circle-2"></div>
+                <div class="circle circle-3"></div>
+            </div>
+            <div class="bubble" id="bubble"></div>
+        </div>
+
+        <div class="readings">
+            <div class="card">
+                <div class="card-label">Ángulo X</div>
+                <div class="card-value" id="valX">0.0<span>°</span></div>
+            </div>
+            <div class="card">
+                <div class="card-label">Ángulo Y</div>
+                <div class="card-value" id="valY">0.0<span>°</span></div>
+            </div>
+        </div>
+
+        <div id="status-text" style="height: 20px; font-weight: 600;"></div>
+
+        <div class="controls">
+            <button onclick="resetCalibration()">
+                <span>🔄</span> Calibrar 0°
+            </button>
+        </div>
+    </main>
+
+    <footer>
+        Hecho con ❤️ para un nivelado perfecto
+    </footer>
+
+    <script>
+        const bubble = document.getElementById('bubble');
+        const levelBox = document.getElementById('levelBox');
+        const valX = document.getElementById('valX');
+        const valY = document.getElementById('valY');
+        const statusText = document.getElementById('status-text');
+        const warning = document.getElementById('warning');
+        const warningText = document.getElementById('warning-text');
+        const overlay = document.getElementById('overlay');
+        const httpsHelp = document.getElementById('https-help');
+        const startBtn = document.getElementById('startBtn');
+
+        // Diagnósticos
+        window.addEventListener('load', () => {
+            const isSecure = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+            const hasSensors = typeof DeviceOrientationEvent !== 'undefined';
+            
+            document.getElementById('diag-https').querySelector('span').innerHTML = isSecure ? '✅ SI' : '❌ NO';
+            document.getElementById('diag-sensors').querySelector('span').innerHTML = hasSensors ? '✅ SI' : '❌ NO';
+            document.getElementById('diag-context').querySelector('span').innerText = location.protocol.toUpperCase();
+
+            if (!isSecure) {
+                httpsHelp.classList.remove('hidden');
+                startBtn.style.background = 'rgba(255,255,255,0.1)';
+            }
+        });
+
+        let offsetX = 0;
+        let offsetY = 0;
+        let isActive = false;
+        let lastUpdate = 0;
+
+        async function initSensors() {
+            if (typeof DeviceOrientationEvent !== 'undefined' && 
+                typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const permission = await DeviceOrientationEvent.requestPermission();
+                    if (permission === 'granted') {
+                        startListening();
+                    } else {
+                        alert("Permiso denegado. No se puede usar el nivel.");
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert("Error al solicitar permisos.");
+                }
+            } else {
+                // No es iOS o no requiere permiso explícito
+                startListening();
+            }
+        }
+
+        function startListening() {
+            window.addEventListener('deviceorientation', handleOrientation);
+            overlay.classList.add('hidden');
+            isActive = true;
+            
+            // Timeout para verificar si realmente llegan datos
+            setTimeout(() => {
+                if (lastUpdate === 0) {
+                    warning.classList.remove('hidden');
+                    warningText.innerText = "No se reciben datos. Asegúrate de que el sitio use HTTPS.";
+                }
+            }, 1500);
+        }
+
+        function resetCalibration() {
+            offsetX = rawX;
+            offsetY = rawY;
+            statusText.innerText = "Calibrado";
+            setTimeout(() => statusText.innerText = "", 2000);
+        }
+
+        let rawX = 0;
+        let rawY = 0;
+
+        function handleOrientation(event) {
+            lastUpdate = Date.now();
+            warning.classList.add('hidden');
+
+            // En móviles, beta es adelante/atrás, gamma es izquierda/derecha
+            rawX = event.beta || 0;
+            rawY = event.gamma || 0;
+
+            // Aplicar calibración
+            let x = rawX - offsetX;
+            let y = rawY - offsetY;
+
+            // Limitar rangos para visualización
+            const maxTilt = 45;
+            let dispX = Math.max(-maxTilt, Math.min(maxTilt, x));
+            let dispY = Math.max(-maxTilt, Math.min(maxTilt, y));
+
+            // Calcular posición de la burbuja (radio del contenedor es ~140px, burbuja es 50px)
+            // El área utilizable es un círculo de 115px de radio
+            const radius = 115;
+            
+            // Mapear grados a píxeles
+            let posX = (dispY / maxTilt) * radius;
+            let posY = (dispX / maxTilt) * radius;
+
+            bubble.style.transform = `translate(${posX}px, ${posY}px)`;
+
+            // Mostrar valores
+            valX.innerHTML = `${x.toFixed(1)}<span>°</span>`;
+            valY.innerHTML = `${y.toFixed(1)}<span>°</span>`;
+
+            // Detectar si está nivelado (margen de 0.5 grados)
+            if (Math.abs(x) < 0.5 && Math.abs(y) < 0.5) {
+                levelBox.classList.add('leveled');
+                statusText.innerHTML = '<span class="leveled-text">¡NIVELADO!</span>';
+                if (navigator.vibrate) navigator.vibrate(50); // Vibración sutil
+            } else {
+                levelBox.classList.remove('leveled');
+                statusText.innerText = "";
+            }
+        }
+
+        // Prevenir scroll accidental
+        document.body.addEventListener('touchmove', function(e){ e.preventDefault(); }, { passive: false });
+
+    </script>
+</body>
+</html>
